@@ -1,0 +1,11 @@
+lint:
+  rules:
+    remove:
+      - IMPORTS_SORTED
+      - ORDER
+      - MAX_LINE_LENGTH
+
+  directories:
+    exclude:
+      - protobuf/google
+      - protobuf/buf
