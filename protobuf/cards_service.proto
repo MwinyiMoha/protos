@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package cards.v1;
+
+option go_package = "github.com/mwinyimoha/protos/gen/go;pb";
+
+
+import "buf/validate/validate.proto";
+import "google/api/annotations.proto";
+
+
+message ValidateCardNumberRequest {
+  string card_number = 1 [
+    (buf.validate.field).required = true
+  ];
+}
+
+message ValidateCardNumberResponse {
+  string card_number = 1 [
+    (buf.validate.field).required = true
+  ];
+  string provider_name = 2 [
+    (buf.validate.field).required = true
+  ];
+  string provider_badge = 3 [
+    (buf.validate.field).required = true,
+    (buf.validate.field).string.uri = true
+  ];
+}
+
+service CardsService {
+
+  rpc ValidateCardNumber(ValidateCardNumberRequest) returns (ValidateCardNumberResponse) {
+    option (google.api.http) = {
+      get: "/cards-service/v1/validate/{card_number}"
+    };
+  }
+
+}
