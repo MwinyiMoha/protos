@@ -1,0 +1,32 @@
+name: Build & Release
+
+on:
+  push:
+    branches:
+      - "main"
+
+permissions:
+  contents: write
+
+jobs:
+  go-release:
+    name: Publish Revision
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Create tags
+        run: |
+          BASE_VERSION=${{ secrets.BASE_VERSION }}
+          SHORT_SHA=$(git rev-parse --short HEAD)
+          echo "TRACKING_TAG=${BASE_VERSION}-${SHORT_SHA}" >> $GITHUB_ENV
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ env.TRACKING_TAG }}
+          name: "Release ${{ env.TRACKING_TAG }}"
+          generate_release_notes: true

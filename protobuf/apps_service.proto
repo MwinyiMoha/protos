@@ -1,0 +1,176 @@
+syntax = "proto3";
+
+package apps.v1;
+
+option go_package = "github.com/mwinyimoha/protos/gen/go;pb";
+
+import "buf/validate/validate.proto";
+import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
+
+
+enum Environment {
+  ENVIRONMENT_UNSPECIFIED = 0;
+  ENVIRONMENT_SANDBOX = 1;
+  ENVIRONMENT_PRODUCTION = 2;
+}
+
+message App {
+  string id = 1 [
+    (buf.validate.field).required = true
+  ];
+  string name = 2 [
+    (buf.validate.field).required = true
+  ];
+  string description = 3;
+  string owner_id = 4 [
+    (buf.validate.field).required = true
+  ];
+  Environment environment = 5 [
+    (buf.validate.field).required = true,
+    (buf.validate.field).enum = { defined_only: true, not_in: [0]}
+  ];
+  string app_key = 6 [
+    (buf.validate.field).required = true
+  ];
+  google.protobuf.Timestamp created_at = 7 [
+    (buf.validate.field).required = true
+  ];
+  google.protobuf.Timestamp updated_at = 8 [
+    (buf.validate.field).required = true
+  ];
+  bool is_deleted = 9 [
+    (buf.validate.field).required = true
+  ];
+  google.protobuf.Timestamp deleted_at = 10;
+}
+
+message CreateAppRequest {
+  string name = 1 [
+    (buf.validate.field).required = true,
+    (buf.validate.field).string.min_len = 3
+  ];
+  string description = 2 [
+    (buf.validate.field).string.max_len = 256
+  ];
+  Environment environment = 3 [
+    (buf.validate.field).required = true,
+    (buf.validate.field).enum = { defined_only: true, not_in: [0]}
+  ];
+}
+
+message CreateAppResponse {
+  App app = 1 [
+    (buf.validate.field).required = true
+  ];
+}
+
+message GetAppsRequest {
+  string owner_id = 1;
+  bool is_deleted = 2;
+  Environment environment = 3 [
+    (buf.validate.field).enum = { defined_only: true, not_in: [0]}
+  ];
+}
+
+message GetAppsResponse {
+  repeated App apps = 1;
+}
+
+message GetAppRequest {
+  string id = 1 [
+    (buf.validate.field).required = true
+  ];
+}
+
+message GetAppResponse {
+  App app = 1 [
+    (buf.validate.field).required = true
+  ];
+}
+
+message RotateKeyRequest {
+  string id = 1 [
+    (buf.validate.field).required = true
+  ];
+}
+
+message RotateKeyResponse {
+  string key = 1 [
+    (buf.validate.field).required = true
+  ];
+}
+
+message DecodeKeyRequest {
+  string key = 1 [
+    (buf.validate.field).required = true
+  ];
+}
+
+message DecodeKeyResponse {
+  string id = 1 [
+    (buf.validate.field).required = true
+  ];
+}
+
+message DeleteAppRequest {
+  string id = 1 [
+    (buf.validate.field).required = true
+  ];
+  bool hard = 2;
+}
+
+message DeleteAppResponse {
+  string id = 1 [
+    (buf.validate.field).required = true
+  ];
+  google.protobuf.Timestamp deleted_at = 2 [
+    (buf.validate.field).required = true
+  ];
+  bool hard = 3 [
+    (buf.validate.field).required = true
+  ];
+}
+
+service AppsService {
+
+  rpc CreateApp(CreateAppRequest) returns (CreateAppResponse) {
+    option (google.api.http) = {
+      post: "/apps-service/v1/apps"
+      body: "*"
+    };
+  }
+
+  rpc GetApps(GetAppsRequest) returns (GetAppsResponse) {
+    option (google.api.http) = {
+      get: "/apps-service/v1/apps"
+    };
+  }
+
+  rpc GetApp(GetAppRequest) returns (GetAppResponse) {
+    option (google.api.http) = {
+      get: "/apps-service/v1/apps/{id}"
+    };
+  }
+
+  rpc RotateKey(RotateKeyRequest) returns (RotateKeyResponse) {
+    option (google.api.http) = {
+      post: "/apps-service/v1/apps/rotate-key"
+      body: "*"
+    };
+  }
+
+  rpc DecodeKey(DecodeKeyRequest) returns (DecodeKeyResponse) {
+    option (google.api.http) = {
+      post: "/apps-service/v1/apps/decode"
+      body: "*"
+    };
+  }
+
+  rpc DeleteApp(DeleteAppRequest) returns (DeleteAppResponse) {
+    option (google.api.http) = {
+      delete: "/apps-service/v1/apps/{id}"
+    };
+  }
+
+}
