@@ -67,10 +67,8 @@ message CreateAppResponse {
 
 message GetAppsRequest {
   string owner_id = 1;
-  bool is_deleted = 2;
-  Environment environment = 3 [
-    (buf.validate.field).enum = { defined_only: true, not_in: [0]}
-  ];
+  string app_env =2;
+  bool include_deleted = 3;
 }
 
 message GetAppsResponse {
