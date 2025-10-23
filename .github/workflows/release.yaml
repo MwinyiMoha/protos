@@ -12,6 +12,8 @@ jobs:
   build-descriptor:
     name: Build Proto Descriptor
     runs-on: ubuntu-latest
+    outputs:
+      descriptor_version: ${{ github.sha }}
     steps:
       - name: Checkout Code
         uses: actions/checkout@v5
@@ -40,8 +42,22 @@ jobs:
             --location=${{ secrets.GCP_REGION }} \
             --repository=${{ secrets.GAR_REPOSITORY }} \
             --package=protos \
-            --version=latest \
+            --version=${ GITHUB_SHA } \
             --source=gen/artifacts/desc.pb
+
+  # rebuild-gateway:
+  #   runs-on: ubuntu-latest
+  #   needs: build-descriptor
+  #   steps:
+  #     - name: Trigger Docker workflow in another repository
+  #       env:
+  #         GH_TOKEN: ${{ secrets.TARGET_REPO_TOKEN }}
+  #         TARGET_REPO: your-org/docker-repo
+  #         WORKFLOW_FILE: docker-build.yml
+  #         REF: main
+  #         VERSION: ${{ needs.build-binary.outputs.artifact_version }}
+  #       run: |
+  #         echo "Triggering $WORKFLOW_FILE in $TARGET_REPO with version=$VERSION"
 
   go-release:
     name: Release Go Module
