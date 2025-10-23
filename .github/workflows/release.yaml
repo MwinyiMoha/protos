@@ -42,22 +42,23 @@ jobs:
             --location=${{ secrets.GCP_REGION }} \
             --repository=${{ secrets.GAR_REPOSITORY }} \
             --package=protos \
-            --version=${ GITHUB_SHA } \
+            --version=${GITHUB_SHA} \
             --source=gen/artifacts/desc.pb
 
-  # rebuild-gateway:
-  #   runs-on: ubuntu-latest
+  # trigger-gateway-deploy:
+  #   name: Trigger Gateway Deployment
   #   needs: build-descriptor
+  #   runs-on: ubuntu-latest
   #   steps:
-  #     - name: Trigger Docker workflow in another repository
-  #       env:
-  #         GH_TOKEN: ${{ secrets.TARGET_REPO_TOKEN }}
-  #         TARGET_REPO: your-org/docker-repo
-  #         WORKFLOW_FILE: docker-build.yml
-  #         REF: main
-  #         VERSION: ${{ needs.build-binary.outputs.artifact_version }}
-  #       run: |
-  #         echo "Triggering $WORKFLOW_FILE in $TARGET_REPO with version=$VERSION"
+  #     - name: Trigger Gateway Deployment Workflow
+  #       uses: peter-evans/workflow-dispatch@v2
+  #       with:
+  #         token: ${{ secrets.PAT }}
+  #         repository: ${{ secrets.REMOTE_REPO }}
+  #         workflow: deploy.yaml
+  #         ref: main
+  #         inputs:
+  #           artifact_version: ${{ needs.build-descriptor.outputs.descriptor_version }}
 
   go-release:
     name: Release Go Module
