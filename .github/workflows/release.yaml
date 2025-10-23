@@ -9,12 +9,43 @@ permissions:
   contents: write
 
 jobs:
-  go-release:
-    name: Publish Revision
+  build-descriptor:
+    name: Build Proto Descriptor
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v3
+        with:
+          credentials_json: ${{ secrets.SA_CREDENTIALS }}
+
+      - name: Install gcloud CLI
+        uses: google-github-actions/setup-gcloud@v3
+        with:
+          project_id: ${{ secrets.PROJECT_ID }}
+
+      - name: Build Descriptor
+        run: |
+          make descriptor
+
+      - name: Upload Descriptor to Artifact Registry
+        run: |
+          gcloud artifacts generic upload \
+            --project=${{ secrets.PROJECT_ID }} \
+            --location=${{ secrets.GCP_REGION }} \
+            --repository=${{ secrets.GAR_REPOSITORY }} \
+            --package=protos \
+            --version=latest \
+            --source=gen/artifacts/desc.pb
+
+  go-release:
+    name: Release Go Module
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
