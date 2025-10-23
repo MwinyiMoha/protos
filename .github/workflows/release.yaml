@@ -26,6 +26,9 @@ jobs:
         with:
           project_id: ${{ secrets.PROJECT_ID }}
 
+      - name: Install Protoc
+        uses: arduino/setup-protoc@v3
+
       - name: Build Descriptor
         run: |
           make descriptor
