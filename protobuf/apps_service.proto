@@ -63,6 +63,9 @@ message CreateAppResponse {
   App app = 1 [
     (buf.validate.field).required = true
   ];
+  string api_key = 2 [
+    (buf.validate.field).required = true
+  ];
 }
 
 message GetAppsRequest {
