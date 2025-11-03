@@ -70,7 +70,7 @@ message CreateAppResponse {
 
 message GetAppsRequest {
   string owner_id = 1;
-  string app_env =2;
+  string app_env = 2;
   bool include_deleted = 3;
 }
 
@@ -98,18 +98,6 @@ message RotateKeyRequest {
 
 message RotateKeyResponse {
   string key = 1 [
-    (buf.validate.field).required = true
-  ];
-}
-
-message DecodeKeyRequest {
-  string key = 1 [
-    (buf.validate.field).required = true
-  ];
-}
-
-message DecodeKeyResponse {
-  string id = 1 [
     (buf.validate.field).required = true
   ];
 }
@@ -157,13 +145,6 @@ service AppsService {
   rpc RotateKey(RotateKeyRequest) returns (RotateKeyResponse) {
     option (google.api.http) = {
       post: "/apps-service/v1/apps/rotate-key"
-      body: "*"
-    };
-  }
-
-  rpc DecodeKey(DecodeKeyRequest) returns (DecodeKeyResponse) {
-    option (google.api.http) = {
-      post: "/apps-service/v1/apps/decode"
       body: "*"
     };
   }
