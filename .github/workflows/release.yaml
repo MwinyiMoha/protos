@@ -18,6 +18,13 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v5
 
+      - name: Install Protoc
+        uses: arduino/setup-protoc@v3
+
+      - name: Generate Descriptor
+        run: |
+          make descriptor
+
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v3
         with:
@@ -28,20 +35,6 @@ jobs:
         with:
           project_id: ${{ secrets.PROJECT_ID }}
 
-      - name: Install Protoc
-        uses: arduino/setup-protoc@v3
-
-      - name: Generate Descriptor
-        run: |
-          make descriptor
-
-      # - name: Build Artifact Path 
-      #   run: |
-      #     echo "ART_PATH=${{ secrets.REGISTRY }}/${{ secrets.PROJECT_ID }}/${{ secrets.ART_REPOSITORY }}/descriptor-${{ github.sha }}.pb" >> "$GITHUB_ENV"
-
-      # - name: Upload Descriptor
-      #   run: |
-      #     gcloud artifacts generic upload ${{ env.ART_PATH }} --source=gen/artifacts/descriptor.pb
       - name: Upload Descriptor
         run: |
           gcloud artifacts generic upload \
