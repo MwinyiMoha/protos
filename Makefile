@@ -12,7 +12,7 @@ descriptor:
 	--proto_path=protobuf \
 	--include_imports \
 	--include_source_info \
-	--descriptor_set_out=gen/artifacts/desc.pb \
+	--descriptor_set_out=gen/artifacts/descriptor.pb \
 	protobuf/*.proto
 
 .PHONY: codegen descriptor
