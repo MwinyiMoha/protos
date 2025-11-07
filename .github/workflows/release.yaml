@@ -35,13 +35,21 @@ jobs:
         run: |
           make descriptor
 
-      - name: Build Artifact Path 
-        run: |
-          echo "ART_PATH=${{ secrets.REGISTRY }}/${{ secrets.PROJECT_ID }}/${{ secrets.ART_REPOSITORY }}/descriptor-${{ github.sha }}.pb" >> "$GITHUB_ENV"
+      # - name: Build Artifact Path 
+      #   run: |
+      #     echo "ART_PATH=${{ secrets.REGISTRY }}/${{ secrets.PROJECT_ID }}/${{ secrets.ART_REPOSITORY }}/descriptor-${{ github.sha }}.pb" >> "$GITHUB_ENV"
 
+      # - name: Upload Descriptor
+      #   run: |
+      #     gcloud artifacts generic upload ${{ env.ART_PATH }} --source=gen/artifacts/descriptor.pb
       - name: Upload Descriptor
         run: |
-          gcloud artifacts generic upload ${{ env.ART_PATH }} --source=gen/artifacts/descriptor.pb
+          gcloud artifacts generic upload \
+            --repository=${{ secrets.ART_REPOSITORY }} \
+            --location=${{ secrets.GCP_REGION }} \
+            --package=protos \
+            --version=${{ github.sha }} \
+            --source=gen/artifacts/descriptor.pb
 
   trigger-gateway-deploy:
     name: Trigger Gateway Deployment
