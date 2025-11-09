@@ -9,7 +9,7 @@ This repository contains the Protocol Buffers (`.proto`) definitions for various
 The repository is organized into the following directories:
 - **protobuf/buf** — Contains the required Buf proto definitions for field validation using protovalidate
 - **protobuf/google/** — Contains the required Google API and RPC proto definitions for annotations and rich error support
-- **protobuf/...** — Contains the rest of the definitions i.e message, services,and shared resources
+- **protobuf/** — Contains the rest of the definitions i.e message, services,and shared resources
 
 ---
 
@@ -23,9 +23,12 @@ The repository is organized into the following directories:
 
 ## 🧰 Development Notes
 
-- Generated Go packages are output to `gen/go/pb`  
 - Validation rules follow protovalidate specifications
-- Envoy configuration should reference `desc.pb` for HTTP/JSON transcoding
+- Generated Go packages are output to `gen/go/pb` 
+- Generated descriptor files are output to `gen/artifacts` 
+- Proxy/Gateway configuration should reference generated descriptor file for HTTP/JSON transcoding
+- Update `codegen` target in Makefile to generate stubs for other languages
+- Install pre-commit hooks for automatic linting before commits
 
 ---
 
